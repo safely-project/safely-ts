@@ -4,7 +4,7 @@ import {
   RpcResponseAndContext,
   SimulatedTransactionResponse,
   Transaction,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 
 /** Copy of Connection.simulateTransaction that takes a commitment parameter. */
 export async function simulateTransaction(

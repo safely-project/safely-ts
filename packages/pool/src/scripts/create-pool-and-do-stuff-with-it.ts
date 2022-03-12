@@ -4,15 +4,15 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-} from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID, TokenInstructions } from '@project-serum/token';
+} from '@safecoin/web3.js';
+import { TOKEN_PROGRAM_ID, TokenInstructions } from '@safely-project/token';
 import { promisify } from 'util';
 import { homedir } from 'os';
 import { readFile } from 'fs';
 import BN from 'bn.js';
 import { PoolTransactions } from '../transactions';
 import { getPoolBasket, loadPoolInfo, PoolInfo, UserInfo } from '../index';
-import { getAssociatedTokenAddress } from '@project-serum/associated-token';
+import { getAssociatedTokenAddress } from '@safely-project/associated-token';
 
 const POOL_PROGRAM_ID = new PublicKey(
   'ERvQUuLLY89DcwiUYemUgogdt2TFh7CG7cNW1fEFzeMJ',

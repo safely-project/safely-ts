@@ -1,13 +1,13 @@
 import { struct, u32 } from 'buffer-layout';
-import { Layout, rustEnum, tagged, u64 } from '@project-serum/borsh';
+import { Layout, rustEnum, tagged, u64 } from '@safely-project/borsh';
 import {
   AccountMeta,
   PublicKey,
   TransactionInstruction,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 import BN from 'bn.js';
 import { PoolInfo } from './instructions';
-import { TOKEN_PROGRAM_ID } from '@project-serum/token';
+import { TOKEN_PROGRAM_ID } from '@safely-project/token';
 
 export type AdminRequest =
   | { pause: any }

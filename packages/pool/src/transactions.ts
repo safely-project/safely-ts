@@ -12,18 +12,18 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 import {
   TokenInstructions,
   TOKEN_PROGRAM_ID,
   WRAPPED_SOL_MINT,
-} from '@project-serum/token';
+} from '@safely-project/token';
 import { Basket, PoolAction } from './schema';
 import BN from 'bn.js';
 import {
   createAssociatedTokenAccount,
   getAssociatedTokenAddress,
-} from '@project-serum/associated-token';
+} from '@safely-project/associated-token';
 
 export interface TransactionAndSigners {
   transaction: Transaction;

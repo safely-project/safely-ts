@@ -1,8 +1,8 @@
 {
-  "name": "@project-serum/pool",
+  "name": "@safely-project/pool",
   "version": "0.2.3",
-  "description": "Library for interacting with the serum pools",
-  "repository": "project-serum/serum-ts",
+  "description": "Library for interacting with the Safely pools",
+  "repository": "safely-project/safely-ts",
   "main": "dist/lib/index.js",
   "source": "src/index.js",
   "types": "dist/lib/index.d.ts",
@@ -29,17 +29,17 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@project-serum/associated-token": "^0.1.1",
-    "@project-serum/borsh": "^0.0.1-beta.0",
-    "@project-serum/token": "^0.0.1-alpha.2",
+    "@safely-project/associated-token": "^0.1.1",
+    "@safely-project/borsh": "^0.2.2",
+    "@safely-project/token": "^0.1.0",
     "bn.js": "^5.1.2",
     "buffer-layout": "^1.2.0"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^0.90.0"
+    "@safecoin/web3.js": "^1.22.0"
   },
   "devDependencies": {
-    "@solana/web3.js": "^0.90.0",
+    "@safecoin/web3.js": "^1.22.0",
     "@types/bn.js": "^4.11.6",
     "@types/jest": "^26.0.9",
     "@typescript-eslint/eslint-plugin": "^4.6.0",

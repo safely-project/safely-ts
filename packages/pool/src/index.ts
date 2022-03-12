@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@safecoin/web3.js';
 import { Basket, decodePoolState, isPoolState, PoolAction } from './schema';
 import { PoolInfo } from './instructions';
 import { simulateTransaction } from './simulate-transaction';

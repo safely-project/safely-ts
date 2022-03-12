@@ -1598,11 +1598,6 @@
     pako "^2.0.3"
     snake-case "^3.0.4"
 
-"@project-serum/associated-token@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@project-serum/associated-token/-/associated-token-0.1.1.tgz#9acf745e84dad21e2ea26e06694704b9d698e532"
-  integrity sha512-Zc1wdqragbDiyBVagzIbIsMe37P7fgkArWZPIj+jJjDIoznlmYMK6ASU5mtdDZrPJ7sNABF/lzZ3+jvCCcU+oA==
-
 "@project-serum/borsh@^0.0.1-beta.0":
   version "0.0.1-beta.0"
   resolved "https://registry.yarnpkg.com/@project-serum/borsh/-/borsh-0.0.1-beta.0.tgz#8ab465ac23e0d840127c7922f8a1a500b50667d5"
@@ -1618,14 +1613,6 @@
   dependencies:
     bn.js "^5.1.2"
     buffer-layout "^1.2.0"
-
-"@project-serum/token@^0.0.1-alpha.2":
-  version "0.0.1-alpha.3"
-  resolved "https://registry.yarnpkg.com/@project-serum/token/-/token-0.0.1-alpha.3.tgz#ddf2999315ab068fa956520e8950996650bac30f"
-  integrity sha512-QuEDvp92u4snzK8k+yxgDmz0+I09F37/Bkw2cJdmGA8yulVd+Sy6HnSgUrxIc9qxHPUR7K/uQUuUHn/LmphUeg==
-  dependencies:
-    "@project-serum/borsh" "^0.0.1-beta.0"
-    bn.js "^5.1.3"
 
 "@safecoin/web3.js@^1.2.0", "@safecoin/web3.js@^1.22.0":
   version "1.29.4"
@@ -1646,6 +1633,14 @@
     secp256k1 "^4.0.2"
     superstruct "^0.14.2"
     tweetnacl "^1.0.0"
+
+"@safely-project/token@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@safely-project/token/-/token-0.1.0.tgz#218918036e325d8312ffb02cc2dd1c04104c3278"
+  integrity sha512-hyANEV7y/Q1Cvh6Bgkxh1zxAxUoU2x/Dau1mAc36GQgCta24tC6LqXpkmFTbSEOGzQYV4HWq9ZG2tWCPYbs1Tw==
+  dependencies:
+    "@project-serum/borsh" "^0.0.1-beta.0"
+    bn.js "^5.1.3"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.1"

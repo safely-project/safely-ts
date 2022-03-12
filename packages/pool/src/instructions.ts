@@ -3,9 +3,9 @@ import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
   TransactionInstruction,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 import { encodePoolRequest, PoolAction, PoolState } from './schema';
-import { TOKEN_PROGRAM_ID } from '@project-serum/token';
+import { TOKEN_PROGRAM_ID } from '@safely-project/token';
 
 export interface PoolInfo {
   address: PublicKey;

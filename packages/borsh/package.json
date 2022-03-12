@@ -1,5 +1,5 @@
 {
-  "name": "@safely-ts/borsh",
+  "name": "@safely-project/borsh",
   "version": "0.2.2",
   "description": "Safely Borsh",
   "main": "dist/lib/index.js",
@@ -22,6 +22,7 @@
     "prepare": "run-s clean build"
   },
   "dependencies": {
+    "@safecoin/web3.js": "^1.2.0",
     "bn.js": "^5.1.2",
     "buffer-layout": "^1.2.0"
   },
@@ -30,5 +31,17 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/safely-project/safely-ts.git"
+  },
+  "keywords": [
+    "safely"
+  ],
+  "author": "Safely",
+  "bugs": {
+    "url": "https://github.com/safely-project/safely-ts/issues"
+  },
+  "homepage": "https://github.com/safely-project/safely-ts#readme"
 }

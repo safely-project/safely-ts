@@ -1,7 +1,7 @@
 {
-  "name": "@project-serum/borsh",
+  "name": "@safely-ts/borsh",
   "version": "0.2.2",
-  "description": "Serum Borsh",
+  "description": "Safely Borsh",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
@@ -26,7 +26,7 @@
     "buffer-layout": "^1.2.0"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^1.2.0"
+    "@safecoin/web3.js": "^1.2.0"
   },
   "files": [
     "dist"

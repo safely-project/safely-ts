@@ -1,8 +1,8 @@
 {
-  "name": "@project-serum/associated-token",
+  "name": "@safely-project/associated-token",
   "version": "0.1.1",
   "description": "Library for interacting with SPL Associated Token Accounts",
-  "repository": "project-serum/serum-ts",
+  "repository": "safely-project/safely-ts",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
@@ -23,10 +23,10 @@
     "prepare": "run-s clean build"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^0.90.0"
+    "@safecoin/web3.js": "^1.22.0"
   },
   "devDependencies": {
-    "@solana/web3.js": "^0.90.0"
+    "@safecoin/web3.js": "^1.22.0"
   },
   "files": [
     "dist"

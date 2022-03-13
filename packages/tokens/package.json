@@ -1,7 +1,7 @@
 {
   "name": "@project-serum/tokens",
   "version": "0.0.7",
-  "description": "Serum tokens",
+  "description": "Safely tokens",
   "main": "dist/index.umd.js",
   "module": "dist/index.es5.js",
   "types": "dist/lib/src/index.d.ts",

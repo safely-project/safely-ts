@@ -15,6 +15,9 @@ import {
 import { DexInstructions } from '../instructions';
 import { Middleware } from './middleware';
 
+// ARA : https://github.com/project-serum/swap-ui/issues/71
+// had to ts-ignore publikey that could be null or undef
+
 // MarketProxy provides an API for constructing transactions to an on-chain
 // DEX proxy, which relays all instructions to the orderbook. Minimally, this
 // requires two modifications for DEX instructions.
@@ -182,6 +185,7 @@ export class MarketProxyInstruction {
         this._dexProgramId,
       ),
       programId: this._proxyProgramId,
+      //@ts-ignore
       referrerQuoteWallet,
     });
     this._middlewares.forEach((mw) => mw.settleFunds(ix));

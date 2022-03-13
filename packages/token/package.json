@@ -1,8 +1,8 @@
 {
-  "name": "@project-serum/token",
+  "name": "@safely-project/token",
   "version": "0.1.0",
-  "description": "Utilities for interacting with SPL Tokens",
-  "repository": "project-serum/serum-ts",
+  "description": "Utilities for interacting with Safecoin SPL Tokens",
+  "repository": "safely-project/safely-ts",
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
@@ -24,11 +24,11 @@
     "prepare": "run-s clean build"
   },
   "dependencies": {
-    "@project-serum/borsh": "^0.0.1-beta.0",
+    "@safely-project/borsh": "^0.0.1-beta.0",
     "bn.js": "^5.1.3"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^1.17.0"
+    "@safecoin/web3.js": "^1.17.0"
   },
   "files": [
     "dist"

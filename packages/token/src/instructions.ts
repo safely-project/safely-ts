@@ -2,7 +2,7 @@ import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
   TransactionInstruction,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 import BN from 'bn.js';
 import {
   option,
@@ -12,14 +12,14 @@ import {
   struct,
   u8,
   EnumLayout,
-} from '@project-serum/borsh';
+} from '@safely-project/borsh';
 
 export const TOKEN_PROGRAM_ID = new PublicKey(
   'ToKLx75MGim1d1jRusuVX8xvdvvbSDESVaNXpRA9PHN',
 );
 
 export const WRAPPED_SOL_MINT = new PublicKey(
-  'Safe111111111111111111111111111111111111112',
+  'Safe111111111111111111111111111111111111111',
 );
 
 export type TokenInstructionLayout =
@@ -46,8 +46,8 @@ export type TokenInstructionLayout =
   | { mintToChecked: { amount: BN; decimals: number } }
   | { burnChecked: { amount: BN; decimals: number } };
 
-export const TokenInstructionLayout: EnumLayout<TokenInstructionLayout> = rustEnum(
-  [
+export const TokenInstructionLayout: EnumLayout<TokenInstructionLayout> =
+  rustEnum([
     struct(
       [
         u8('decimals'),
@@ -74,8 +74,7 @@ export const TokenInstructionLayout: EnumLayout<TokenInstructionLayout> = rustEn
     struct([u64('amount'), u8('decimals')], 'approveChecked'),
     struct([u64('amount'), u8('decimals')], 'mintToChecked'),
     struct([u64('amount'), u8('decimals')], 'burnChecked'),
-  ],
-);
+  ]);
 
 const instructionMaxSpan = Math.max(
   ...Object.values(TokenInstructionLayout.registry).map(r => r.span),

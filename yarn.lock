@@ -1659,14 +1659,6 @@
     pako "^2.0.3"
     snake-case "^3.0.4"
 
-"@project-serum/borsh@^0.0.1-beta.0":
-  version "0.0.1-beta.0"
-  resolved "https://registry.yarnpkg.com/@project-serum/borsh/-/borsh-0.0.1-beta.0.tgz#8ab465ac23e0d840127c7922f8a1a500b50667d5"
-  integrity sha512-jBrGi0KBMe1UXkItp1JKR8Qtaal4xPrbkIWKzbglqVLRNnG+DiDWpZk8I9XMrSLiAFYTvQp8MIJmwwoWSyN8yQ==
-  dependencies:
-    bn.js "^5.1.2"
-    buffer-layout "^1.2.0"
-
 "@project-serum/borsh@^0.2.1", "@project-serum/borsh@^0.2.2":
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@project-serum/borsh/-/borsh-0.2.5.tgz#6059287aa624ecebbfc0edd35e4c28ff987d8663"
@@ -1739,13 +1731,12 @@
     snake-case "^3.0.4"
     toml "^3.0.0"
 
-"@safely-project/token@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@safely-project/token/-/token-0.1.0.tgz#218918036e325d8312ffb02cc2dd1c04104c3278"
-  integrity sha512-hyANEV7y/Q1Cvh6Bgkxh1zxAxUoU2x/Dau1mAc36GQgCta24tC6LqXpkmFTbSEOGzQYV4HWq9ZG2tWCPYbs1Tw==
+"@safely-project/borsh@^0.0.1-beta.0":
+  version "0.2.5"
   dependencies:
-    "@project-serum/borsh" "^0.0.1-beta.0"
-    bn.js "^5.1.3"
+    "@safecoin/web3.js" "^1.2.0"
+    bn.js "^5.1.2"
+    buffer-layout "^1.2.0"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"

@@ -1,9 +1,9 @@
 {
-  "name": "@project-serum/serum",
-  "version": "0.13.61",
-  "description": "Library for interacting with the serum dex",
+  "name": "@safely-project/serum",
+  "version": "0.13.62",
+  "description": "Library for interacting with the safely dex",
   "license": "MIT",
-  "repository": "project-serum/serum-ts",
+  "repository": "safely-project/safely-ts",
   "main": "lib/index.js",
   "source": "src/index.js",
   "types": "lib/index.d.ts",
@@ -46,9 +46,9 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "@solana/spl-token": "^0.1.6",
-    "@project-serum/anchor": "^0.11.1",
-    "@solana/web3.js": "^1.21.0",
+    "@safecoin/safe-token": "^0.1.6",
+    "@safely-project/anchor": "^0.11.1",
+    "@safecoin/web3.js": "^1.21.0",
     "bn.js": "^5.1.2",
     "buffer-layout": "^1.2.0"
   },

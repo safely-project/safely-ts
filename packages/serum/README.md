@@ -10,19 +10,19 @@ JavaScript client library for interacting with the Project Serum DEX.
 Using npm:
 
 ```
-npm install @solana/web3.js @project-serum/serum
+npm install @safecoin/web3.js @project-serum/serum
 ```
 
 Using yarn:
 
 ```
-yarn add @solana/web3.js @project-serum/serum
+yarn add @safecoin/web3.js @project-serum/serum
 ```
 
 ## Usage
 
 ```js
-import { Account, Connection, PublicKey } from '@solana/web3.js';
+import { Account, Connection, PublicKey } from '@safecoin/web3.js';
 import { Market } from '@project-serum/serum';
 
 let connection = new Connection('https://testnet.solana.com');

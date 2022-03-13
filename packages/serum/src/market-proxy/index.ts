@@ -1,6 +1,10 @@
 import BN from 'bn.js';
-import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { utils } from '@project-serum/anchor';
+import {
+  Connection,
+  PublicKey,
+  TransactionInstruction,
+} from '@safecoin/web3.js';
+import { utils } from '@safely-project/anchor';
 import {
   Market,
   MarketOptions,

@@ -3,7 +3,7 @@ import {
   PublicKey,
   SYSVAR_RENT_PUBKEY,
   TransactionInstruction,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 import { publicKeyLayout } from './layout';
 
 // NOTE: Update these if the position of arguments for the initializeAccount instruction changes
@@ -26,7 +26,7 @@ export const TOKEN_PROGRAM_ID = new PublicKey(
 );
 
 export const WRAPPED_SOL_MINT = new PublicKey(
-  'Safe111111111111111111111111111111111111112',
+  'Safe111111111111111111111111111111111111111',
 );
 
 export const MSRM_MINT = new PublicKey(

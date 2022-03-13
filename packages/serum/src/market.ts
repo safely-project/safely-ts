@@ -8,13 +8,13 @@ import {
   AccountInfo,
   Commitment,
   Connection,
-  LAMPORTS_PER_SOL,
+  LAMPORTS_PER_SAFE,
   PublicKey,
   SystemProgram,
   Transaction,
   TransactionInstruction,
   TransactionSignature,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 import { decodeEventQueue, decodeRequestQueue } from './queue';
 import { Buffer } from 'buffer';
 import { getFeeTier, supportsSrmFeeDiscounts } from './fees';
@@ -433,20 +433,19 @@ export class Market {
       feeDiscountPubkey,
     }: OrderParams,
   ) {
-    const { transaction, signers } = await this.makePlaceOrderTransaction<
-      Account
-    >(connection, {
-      owner,
-      payer,
-      side,
-      price,
-      size,
-      orderType,
-      clientId,
-      openOrdersAddressKey,
-      openOrdersAccount,
-      feeDiscountPubkey,
-    });
+    const { transaction, signers } =
+      await this.makePlaceOrderTransaction<Account>(connection, {
+        owner,
+        payer,
+        side,
+        price,
+        size,
+        orderType,
+        clientId,
+        openOrdersAddressKey,
+        openOrdersAccount,
+        feeDiscountPubkey,
+      });
     return await this._sendTransaction(connection, transaction, [
       owner,
       ...signers,
@@ -670,12 +669,12 @@ export class Market {
         wrappedSolAccount = new Account();
         let lamports;
         if (side === 'buy') {
-          lamports = Math.round(price * size * 1.01 * LAMPORTS_PER_SOL);
+          lamports = Math.round(price * size * 1.01 * LAMPORTS_PER_SAFE);
           if (openOrdersAccounts.length > 0) {
             lamports -= openOrdersAccounts[0].quoteTokenFree.toNumber();
           }
         } else {
-          lamports = Math.round(size * LAMPORTS_PER_SOL);
+          lamports = Math.round(size * LAMPORTS_PER_SAFE);
           if (openOrdersAccounts.length > 0) {
             lamports -= openOrdersAccounts[0].baseTokenFree.toNumber();
           }

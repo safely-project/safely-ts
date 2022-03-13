@@ -12,7 +12,7 @@ import {
   SYSVAR_RENT_PUBKEY,
   TransactionInstruction,
   PublicKey,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 import { TOKEN_PROGRAM_ID } from './token-instructions';
 
 // NOTE: Update these if the position of arguments for the settleFunds instruction changes

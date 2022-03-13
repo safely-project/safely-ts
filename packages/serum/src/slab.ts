@@ -1,7 +1,7 @@
 import BN from 'bn.js';
 import { blob, offset, seq, struct, u32, u8, union } from 'buffer-layout';
 import { publicKeyLayout, setLayoutDecoder, u128, u64, zeros } from './layout';
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@safecoin/web3.js';
 
 const SLAB_HEADER_LAYOUT = struct(
   [
@@ -113,9 +113,7 @@ export class Slab {
     return this.items(false);
   }
 
-  *items(
-    descending = false,
-  ): Generator<{
+  *items(descending = false): Generator<{
     ownerSlot: number;
     key: BN;
     owner: PublicKey;

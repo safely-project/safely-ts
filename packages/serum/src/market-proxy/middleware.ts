@@ -1,9 +1,9 @@
-import { utils } from '@project-serum/anchor';
+import { utils } from '@safely-project/anchor';
 import {
   SystemProgram,
   PublicKey,
   TransactionInstruction,
-} from '@solana/web3.js';
+} from '@safecoin/web3.js';
 
 export interface Middleware {
   initOpenOrders(ix: TransactionInstruction): void;
@@ -40,21 +40,7 @@ export class OpenOrdersPda implements Middleware {
   ): Promise<PublicKey> {
     // b"open-orders-init"
     const openOrdersStr = Buffer.from([
-      111,
-      112,
-      101,
-      110,
-      45,
-      111,
-      114,
-      100,
-      101,
-      114,
-      115,
-      45,
-      105,
-      110,
-      105,
+      111, 112, 101, 110, 45, 111, 114, 100, 101, 114, 115, 45, 105, 110, 105,
       116,
     ]);
     const [addr] = await PublicKey.findProgramAddress(
@@ -72,17 +58,7 @@ export class OpenOrdersPda implements Middleware {
   ): Promise<PublicKey> {
     // b"open-orders".
     const openOrdersStr = Buffer.from([
-      111,
-      112,
-      101,
-      110,
-      45,
-      111,
-      114,
-      100,
-      101,
-      114,
-      115,
+      111, 112, 101, 110, 45, 111, 114, 100, 101, 114, 115,
     ]);
     const [addr] = await PublicKey.findProgramAddress(
       [
@@ -101,36 +77,12 @@ export class OpenOrdersPda implements Middleware {
     const owner = ix.keys[1].pubkey;
     // b"open-orders"
     const openOrdersSeed = Buffer.from([
-      111,
-      112,
-      101,
-      110,
-      45,
-      111,
-      114,
-      100,
-      101,
-      114,
-      115,
+      111, 112, 101, 110, 45, 111, 114, 100, 101, 114, 115,
     ]);
 
     // b"open-orders-init"
     const openOrdersInitSeed = Buffer.from([
-      111,
-      112,
-      101,
-      110,
-      45,
-      111,
-      114,
-      100,
-      101,
-      114,
-      115,
-      45,
-      105,
-      110,
-      105,
+      111, 112, 101, 110, 45, 111, 114, 100, 101, 114, 115, 45, 105, 110, 105,
       116,
     ]);
     const [openOrders, bump] = utils.publicKey.findProgramAddressSync(
@@ -213,24 +165,24 @@ export class ReferralFees implements Middleware {
 }
 
 export class PermissionedCrank implements Middleware {
-	// eslint-disable-next-line
-	initOpenOrders(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	newOrderV3(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	cancelOrderV2(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	cancelOrderByClientIdV2(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	settleFunds(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	closeOpenOrders(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	prune(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	consumeEvents(_ix: TransactionInstruction) {}
-	// eslint-disable-next-line
-	consumeEventsPermissioned(ix: TransactionInstruction) {
+  // eslint-disable-next-line
+  initOpenOrders(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  newOrderV3(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  cancelOrderV2(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  cancelOrderByClientIdV2(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  settleFunds(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  closeOpenOrders(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  prune(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  consumeEvents(_ix: TransactionInstruction) {}
+  // eslint-disable-next-line
+  consumeEventsPermissioned(ix: TransactionInstruction) {
     ix.keys[ix.keys.length - 1].isSigner = false;
   }
 }

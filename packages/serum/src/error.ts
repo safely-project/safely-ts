@@ -1,4 +1,4 @@
-import { Transaction, SystemProgram } from '@solana/web3.js';
+import { Transaction, SystemProgram } from '@safecoin/web3.js';
 import { PROGRAM_LAYOUT_VERSIONS } from './tokens_and_markets';
 import { TOKEN_PROGRAM_ID } from './token-instructions';
 

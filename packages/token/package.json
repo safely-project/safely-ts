@@ -1,6 +1,6 @@
 {
   "name": "@safely-project/token",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Utilities for interacting with Safecoin SPL Tokens",
   "repository": "safely-project/safely-ts",
   "main": "dist/lib/index.js",

@@ -25,10 +25,13 @@ import {
   swapInstruction,
   TOKEN_PROGRAM_ID,
   withdrawInstruction,
-  WRAPPED_SOL_MINT,
+  WRAPPED_SAFE_MINT,
   LATEST_VERSION,
   getLayoutForProgramId,
-  deserializeMint, PROGRAM_ID, depositExactOneInstruction, withdrawExactOneInstruction,
+  deserializeMint,
+  PROGRAM_ID,
+  depositExactOneInstruction,
+  withdrawExactOneInstruction,
 } from './instructions';
 import { PoolConfig, PoolOptions, TokenAccount } from './types';
 import { divideBnToNumber, timeMs } from './utils';
@@ -208,10 +211,9 @@ export class Pool {
 
     let tokenAccountA: PublicKey | undefined;
     let tokenAccountB: PublicKey | undefined;
-    if (accountA.info.mint.equals(WRAPPED_SOL_MINT)) {
-      const accountRentExempt = await connection.getMinimumBalanceForRentExemption(
-        AccountLayout.span,
-      );
+    if (accountA.info.mint.equals(WRAPPED_SAFE_MINT)) {
+      const accountRentExempt =
+        await connection.getMinimumBalanceForRentExemption(AccountLayout.span);
       const {
         account,
         instructions: createWrappedSolInstructions,
@@ -219,22 +221,21 @@ export class Pool {
       } = createTokenAccount(
         ownerAddress,
         ownerAddress,
-        WRAPPED_SOL_MINT,
+        WRAPPED_SAFE_MINT,
         accountRentExempt,
       );
       tokenAccountA = account.publicKey;
       signers.push(account);
       instructions.push(...createWrappedSolInstructions);
-      cleanUpInstructions.push(...removeWrappedSolInstructions)
+      cleanUpInstructions.push(...removeWrappedSolInstructions);
     } else {
       tokenAccountA = tokenAccounts.find(a =>
         a.info.mint.equals(accountA.info.mint),
       )?.pubkey;
     }
-    if (accountB.info.mint.equals(WRAPPED_SOL_MINT)) {
-      const accountRentExempt = await connection.getMinimumBalanceForRentExemption(
-        AccountLayout.span,
-      );
+    if (accountB.info.mint.equals(WRAPPED_SAFE_MINT)) {
+      const accountRentExempt =
+        await connection.getMinimumBalanceForRentExemption(AccountLayout.span);
       const {
         account,
         instructions: createWrappedSolInstructions,
@@ -242,13 +243,13 @@ export class Pool {
       } = createTokenAccount(
         ownerAddress,
         ownerAddress,
-        WRAPPED_SOL_MINT,
+        WRAPPED_SAFE_MINT,
         accountRentExempt,
       );
       tokenAccountB = account.publicKey;
       signers.push(account);
       instructions.push(...createWrappedSolInstructions);
-      cleanUpInstructions.push(...removeWrappedSolInstructions)
+      cleanUpInstructions.push(...removeWrappedSolInstructions);
     } else {
       tokenAccountB = tokenAccounts.find(a =>
         a.info.mint.equals(accountB.info.mint),
@@ -365,12 +366,11 @@ export class Pool {
 
     const signers: Account[] = [];
 
-    const accountRentExempt = await connection.getMinimumBalanceForRentExemption(
-      AccountLayout.span,
-    );
+    const accountRentExempt =
+      await connection.getMinimumBalanceForRentExemption(AccountLayout.span);
 
     let fromKeyA: PublicKey;
-    if (fromA.mint.equals(WRAPPED_SOL_MINT)) {
+    if (fromA.mint.equals(WRAPPED_SAFE_MINT)) {
       const {
         account,
         instructions: createWrappedSolInstructions,
@@ -378,7 +378,7 @@ export class Pool {
       } = createTokenAccount(
         ownerAddress,
         ownerAddress,
-        WRAPPED_SOL_MINT,
+        WRAPPED_SAFE_MINT,
         fromA.amount + accountRentExempt,
       );
       fromKeyA = account.publicKey;
@@ -390,7 +390,7 @@ export class Pool {
     }
 
     let fromKeyB: PublicKey;
-    if (fromB.mint.equals(WRAPPED_SOL_MINT)) {
+    if (fromB.mint.equals(WRAPPED_SAFE_MINT)) {
       const {
         account,
         instructions: createWrappedSolInstructions,
@@ -398,7 +398,7 @@ export class Pool {
       } = createTokenAccount(
         ownerAddress,
         ownerAddress,
-        WRAPPED_SOL_MINT,
+        WRAPPED_SAFE_MINT,
         fromB.amount + accountRentExempt,
       );
       fromKeyB = account.publicKey;
@@ -486,7 +486,10 @@ export class Pool {
     },
     poolTokenAccount?: PublicKey,
   ): Promise<{ transaction: Transaction; signers: Account[]; payer: T }> {
-    assert(this._decoded.curve.constantPrice, 'Only implemented for constant price pools');
+    assert(
+      this._decoded.curve.constantPrice,
+      'Only implemented for constant price pools',
+    );
     // @ts-ignore
     const ownerAddress: PublicKey = owner.publicKey ?? owner;
     const instructions: TransactionInstruction[] = [];
@@ -503,9 +506,8 @@ export class Pool {
     }
     const authority = poolMint.mintAuthority;
 
-    const accountRentExempt = await connection.getMinimumBalanceForRentExemption(
-      AccountLayout.span,
-    );
+    const accountRentExempt =
+      await connection.getMinimumBalanceForRentExemption(AccountLayout.span);
     const accountA = await this.getCachedTokenAccount(
       connection,
       this._holdingAccounts[0],
@@ -519,21 +521,25 @@ export class Pool {
     const reserve1 = accountB.info.amount.toNumber();
     const supply = poolMint.supply.toNumber();
 
-    const tokenBPrice = this._decoded.curve.constantPrice.token_b_price
+    const tokenBPrice = this._decoded.curve.constantPrice.token_b_price;
     let price;
     if (sourceTokenAccount.mint.equals(this.tokenMints[1])) {
       price = tokenBPrice;
     } else {
       price = 1;
     }
-    const sourceAmountPostFees = sourceTokenAccount.amount - (
-      Math.max(1, sourceTokenAccount.amount / 2) *
-      this._decoded.fees.tradeFeeNumerator / this._decoded.fees.tradeFeeDenominator
-    )
-    const liquidity = Math.floor((sourceAmountPostFees * price * supply) / (reserve0 + reserve1 * tokenBPrice));
+    const sourceAmountPostFees =
+      sourceTokenAccount.amount -
+      (Math.max(1, sourceTokenAccount.amount / 2) *
+        this._decoded.fees.tradeFeeNumerator) /
+        this._decoded.fees.tradeFeeDenominator;
+    const liquidity = Math.floor(
+      (sourceAmountPostFees * price * supply) /
+        (reserve0 + reserve1 * tokenBPrice),
+    );
 
     let fromKey: PublicKey;
-    if (sourceTokenAccount.mint.equals(WRAPPED_SOL_MINT)) {
+    if (sourceTokenAccount.mint.equals(WRAPPED_SAFE_MINT)) {
       const {
         account,
         instructions: createWrappedSolInstructions,
@@ -541,7 +547,7 @@ export class Pool {
       } = createTokenAccount(
         ownerAddress,
         ownerAddress,
-        WRAPPED_SOL_MINT,
+        WRAPPED_SAFE_MINT,
         sourceTokenAccount.amount + accountRentExempt,
       );
       fromKey = account.publicKey;
@@ -618,7 +624,10 @@ export class Pool {
     },
     poolTokenAccount: PublicKey,
   ): Promise<{ transaction: Transaction; signers: Account[]; payer: T }> {
-    assert(this._decoded.curve.constantPrice, 'Only implemented for constant price pools');
+    assert(
+      this._decoded.curve.constantPrice,
+      'Only implemented for constant price pools',
+    );
     // @ts-ignore
     const ownerAddress: PublicKey = owner.publicKey ?? owner;
     const instructions: TransactionInstruction[] = [];
@@ -644,35 +653,38 @@ export class Pool {
       this._holdingAccounts[1],
     );
 
-    const reserve0 = accountA.info.mint.equals(destinationTokenAccount.mint) ?
-      accountA.info.amount.toNumber() - destinationTokenAccount.amount :
-      accountA.info.amount.toNumber();
-    const reserve1 = accountB.info.mint.equals(destinationTokenAccount.mint) ?
-      accountB.info.amount.toNumber() - destinationTokenAccount.amount :
-      accountB.info.amount.toNumber();
+    const reserve0 = accountA.info.mint.equals(destinationTokenAccount.mint)
+      ? accountA.info.amount.toNumber() - destinationTokenAccount.amount
+      : accountA.info.amount.toNumber();
+    const reserve1 = accountB.info.mint.equals(destinationTokenAccount.mint)
+      ? accountB.info.amount.toNumber() - destinationTokenAccount.amount
+      : accountB.info.amount.toNumber();
     const supply = poolMint.supply.toNumber();
 
-    const tokenBPrice = this._decoded.curve.constantPrice.token_b_price
+    const tokenBPrice = this._decoded.curve.constantPrice.token_b_price;
     let price;
     if (destinationTokenAccount.mint.equals(this.tokenMints[1])) {
       price = tokenBPrice;
     } else {
       price = 1;
     }
-    const destinationAmountPostFees = destinationTokenAccount.amount - (
-      Math.max(1, destinationTokenAccount.amount / 2) *
-      this._decoded.fees.tradeFeeNumerator / this._decoded.fees.tradeFeeDenominator
-    )
+    const destinationAmountPostFees =
+      destinationTokenAccount.amount -
+      (Math.max(1, destinationTokenAccount.amount / 2) *
+        this._decoded.fees.tradeFeeNumerator) /
+        this._decoded.fees.tradeFeeDenominator;
     const liquidityPreWithdrawalFee = Math.ceil(
-      (destinationAmountPostFees * price * supply) / (reserve0 + reserve1 * tokenBPrice)
+      (destinationAmountPostFees * price * supply) /
+        (reserve0 + reserve1 * tokenBPrice),
     );
     let liquidity = liquidityPreWithdrawalFee;
     if (this._decoded.fees.ownerWithdrawFeeDenominator > 0) {
-      liquidity += liquidityPreWithdrawalFee * (
-        this._decoded.fees.ownerWithdrawFeeNumerator / this._decoded.fees.ownerWithdrawFeeDenominator
-      )
+      liquidity +=
+        liquidityPreWithdrawalFee *
+        (this._decoded.fees.ownerWithdrawFeeNumerator /
+          this._decoded.fees.ownerWithdrawFeeDenominator);
     } else {
-      liquidity += 1
+      liquidity += 1;
     }
 
     const transferAuthority = approveTransfer(
@@ -756,12 +768,11 @@ export class Pool {
     const cleanupInstructions: TransactionInstruction[] = [];
     const signers: Account[] = [];
 
-    const accountRentExempt = await connection.getMinimumBalanceForRentExemption(
-      AccountLayout.span,
-    );
+    const accountRentExempt =
+      await connection.getMinimumBalanceForRentExemption(AccountLayout.span);
 
     let fromAccount: PublicKey;
-    if (tokenIn.mint.equals(WRAPPED_SOL_MINT)) {
+    if (tokenIn.mint.equals(WRAPPED_SAFE_MINT)) {
       const {
         account,
         instructions: createWrappedSolInstructions,
@@ -769,7 +780,7 @@ export class Pool {
       } = createTokenAccount(
         ownerAddress,
         ownerAddress,
-        WRAPPED_SOL_MINT,
+        WRAPPED_SAFE_MINT,
         amountIn + accountRentExempt,
       );
       fromAccount = account.publicKey;
@@ -781,7 +792,7 @@ export class Pool {
     }
 
     let toAccount: PublicKey;
-    if (tokenOut.mint.equals(WRAPPED_SOL_MINT)) {
+    if (tokenOut.mint.equals(WRAPPED_SAFE_MINT)) {
       const {
         account,
         instructions: createWrappedSolInstructions,
@@ -789,7 +800,7 @@ export class Pool {
       } = createTokenAccount(
         ownerAddress,
         ownerAddress,
-        WRAPPED_SOL_MINT,
+        WRAPPED_SAFE_MINT,
         accountRentExempt,
       );
       toAccount = account.publicKey;
@@ -928,7 +939,11 @@ export class Pool {
     } else if (seed) {
       // Only works when owner is of type Account
       tokenSwapAccountSigner = owner;
-      tokenSwapAccountPubkey = await PublicKey.createWithSeed(ownerAddress, seed, tokenSwapProgram);
+      tokenSwapAccountPubkey = await PublicKey.createWithSeed(
+        ownerAddress,
+        seed,
+        tokenSwapProgram,
+      );
     } else {
       tokenSwapAccountSigner = new Account();
       tokenSwapAccountPubkey = tokenSwapAccountSigner.pubkey;
@@ -951,15 +966,12 @@ export class Pool {
         null,
       ),
     );
-    const accountRentExempt = await connection.getMinimumBalanceForRentExemption(
-      AccountLayout.span,
-    );
+    const accountRentExempt =
+      await connection.getMinimumBalanceForRentExemption(AccountLayout.span);
     const holdingAccounts: { [mint: string]: Account } = {};
     componentMints.forEach(mint => {
-      const {
-        account,
-        instructions: createHoldingTokenAccountInstructions,
-      } = createTokenAccount(authority, ownerAddress, mint, accountRentExempt);
+      const { account, instructions: createHoldingTokenAccountInstructions } =
+        createTokenAccount(authority, ownerAddress, mint, accountRentExempt);
       initializeAccountsInstructions.push(
         ...createHoldingTokenAccountInstructions,
       );
@@ -979,15 +991,13 @@ export class Pool {
     initializeAccountsSigners.push(depositorAccount);
     initializeAccountsInstructions.push(...createLPTokenAccountInstructions);
 
-    const {
-      account: feeAccount,
-      instructions: createFeeAccountInstructions,
-    } = createTokenAccount(
-      SWAP_PROGRAM_OWNER_FEE_ADDRESS,
-      ownerAddress,
-      liquidityTokenMintAccount.publicKey,
-      accountRentExempt,
-    );
+    const { account: feeAccount, instructions: createFeeAccountInstructions } =
+      createTokenAccount(
+        SWAP_PROGRAM_OWNER_FEE_ADDRESS,
+        ownerAddress,
+        liquidityTokenMintAccount.publicKey,
+        accountRentExempt,
+      );
     initializeAccountsSigners.push(feeAccount);
     initializeAccountsInstructions.push(...createFeeAccountInstructions);
     const initializeAccountsTransaction = new Transaction();
@@ -1000,17 +1010,18 @@ export class Pool {
 
     let initializeTokenSwapAccountInstruction;
     if (seed) {
-      initializeTokenSwapAccountInstruction = SystemProgram.createAccountWithSeed({
-        fromPubkey: ownerAddress,
-        basePubkey: ownerAddress,
-        newAccountPubkey: tokenSwapAccountPubkey,
-        seed: seed,
-        lamports: await connection.getMinimumBalanceForRentExemption(
-          getLayoutForProgramId(tokenSwapProgram).span
-        ),
-        space: getLayoutForProgramId(tokenSwapProgram).span,
-        programId: tokenSwapProgram,
-      });
+      initializeTokenSwapAccountInstruction =
+        SystemProgram.createAccountWithSeed({
+          fromPubkey: ownerAddress,
+          basePubkey: ownerAddress,
+          newAccountPubkey: tokenSwapAccountPubkey,
+          seed: seed,
+          lamports: await connection.getMinimumBalanceForRentExemption(
+            getLayoutForProgramId(tokenSwapProgram).span,
+          ),
+          space: getLayoutForProgramId(tokenSwapProgram).span,
+          programId: tokenSwapProgram,
+        });
     } else {
       initializeTokenSwapAccountInstruction = SystemProgram.createAccount({
         fromPubkey: ownerAddress,
@@ -1020,13 +1031,13 @@ export class Pool {
         ),
         space: getLayoutForProgramId(tokenSwapProgram).span,
         programId: tokenSwapProgram,
-      })
+      });
     }
     initializePoolInstructions.push(initializeTokenSwapAccountInstruction);
 
     sourceTokenAccounts.forEach(({ mint, tokenAccount, amount }) => {
       let wrappedAccount: PublicKey;
-      if (mint.equals(WRAPPED_SOL_MINT)) {
+      if (mint.equals(WRAPPED_SAFE_MINT)) {
         const {
           account,
           instructions: createWrappedSolInstructions,
@@ -1034,7 +1045,7 @@ export class Pool {
         } = createTokenAccount(
           ownerAddress,
           ownerAddress,
-          WRAPPED_SOL_MINT,
+          WRAPPED_SAFE_MINT,
           amount + accountRentExempt,
         );
         wrappedAccount = account.publicKey;
@@ -1363,7 +1374,7 @@ export const createTokenAccount = (
       owner,
     ),
   );
-  if (mint.equals(WRAPPED_SOL_MINT)) {
+  if (mint.equals(WRAPPED_SAFE_MINT)) {
     cleanUpInstructions.push(
       Token.createCloseAccountInstruction(
         TOKEN_PROGRAM_ID,

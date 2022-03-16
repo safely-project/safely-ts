@@ -1,9 +1,10 @@
 import {
-  Account,
+  Keypair,
   Connection,
   PublicKey,
   SystemProgram,
   Transaction,
+  Ed25519Keypair,
 } from '@safecoin/web3.js';
 import { TOKEN_PROGRAM_ID, TokenInstructions } from '@safely-project/token';
 import { promisify } from 'util';
@@ -20,33 +21,30 @@ const POOL_PROGRAM_ID = new PublicKey(
 
 async function doStuff() {
   const connection = new Connection('http://localhost:8899', 'recent');
-  const payer = new Account(
-    Buffer.from(
-      JSON.parse(
-        await promisify(readFile)(homedir() + '/.config/solana/id.json', {
-          encoding: 'utf-8',
-        }),
-      ),
+  const thingy = Buffer.from(
+    JSON.parse(
+      await promisify(readFile)(homedir() + '/.config/solana/id.json', {
+        encoding: 'utf-8',
+      }),
     ),
   );
+  const payer = new Keypair(thingy as unknown as Ed25519Keypair);
 
   const [mint1, vault1] = await createMint(connection, payer);
   const [mint2, vault2] = await createMint(connection, payer);
 
-  const [
-    poolAddress,
-    transactions,
-  ] = await PoolTransactions.initializeSimplePool({
-    connection,
-    assetMints: [mint1, mint2],
-    creator: payer.publicKey,
-    creatorAssets: [vault1, vault2],
-    initialAssetQuantities: [new BN(100), new BN(300)],
-    poolStateSpace: 1000,
-    programId: POOL_PROGRAM_ID,
-    poolName: 'Test Pool',
-    feeRate: 2500,
-  });
+  const [poolAddress, transactions] =
+    await PoolTransactions.initializeSimplePool({
+      connection,
+      assetMints: [mint1, mint2],
+      creator: payer.publicKey,
+      creatorAssets: [vault1, vault2],
+      initialAssetQuantities: [new BN(100), new BN(300)],
+      poolStateSpace: 1000,
+      programId: POOL_PROGRAM_ID,
+      poolName: 'Test Pool',
+      feeRate: 2500,
+    });
   console.log('Pool address:', poolAddress.toBase58());
   for (const { transaction, signers } of transactions) {
     await sendAndConfirmTransaction(connection, transaction, [
@@ -156,9 +154,9 @@ async function doStuff() {
   );
 }
 
-async function createMint(connection: Connection, payer: Account) {
-  const mint = new Account();
-  const vault = new Account();
+async function createMint(connection: Connection, payer: Keypair) {
+  const mint = new Keypair();
+  const vault = new Keypair();
   const txn = new Transaction();
   txn.add(
     SystemProgram.createAccount({
@@ -199,11 +197,11 @@ async function createMint(connection: Connection, payer: Account) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function createUserAccounts(
   connection: Connection,
-  payer: Account,
+  payer: Keypair,
   pool: PoolInfo,
 ): Promise<UserInfo> {
-  const poolTokenAccount = new Account();
-  const assetAccounts: Account[] = [];
+  const poolTokenAccount = new Keypair();
+  const assetAccounts: Keypair[] = [];
   const lamports = await connection.getMinimumBalanceForRentExemption(165);
   const txn = new Transaction();
   txn.add(
@@ -221,7 +219,7 @@ async function createUserAccounts(
     }),
   );
   pool.state.assets.forEach(({ mint }) => {
-    const account = new Account();
+    const account = new Keypair();
     assetAccounts.push(account);
     txn.add(
       SystemProgram.createAccount({
@@ -254,7 +252,7 @@ async function createUserAccounts(
 async function sendAndConfirmTransaction(
   connection: Connection,
   transaction: Transaction,
-  signers: Account[],
+  signers: Keypair[],
 ) {
   const txid = await connection.sendTransaction(transaction, signers, {
     preflightCommitment: 'recent',

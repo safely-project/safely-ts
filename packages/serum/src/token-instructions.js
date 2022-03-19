@@ -25,7 +25,7 @@ export const TOKEN_PROGRAM_ID = new PublicKey(
   'ToKLx75MGim1d1jRusuVX8xvdvvbSDESVaNXpRA9PHN',
 );
 
-export const WRAPPED_SOL_MINT = new PublicKey(
+export const WRAPPED_SAFE_MINT = new PublicKey(
   'Safe111111111111111111111111111111111111111',
 );
 

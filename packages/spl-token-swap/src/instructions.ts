@@ -31,11 +31,11 @@ export const PROGRAM_ID = new PublicKey(
 );
 
 export const TOKEN_PROGRAM_ID = new PublicKey(
-  'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+  'ToKLx75MGim1d1jRusuVX8xvdvvbSDESVaNXpRA9PHN',
 );
 
-export const WRAPPED_SOL_MINT = new PublicKey(
-  'So11111111111111111111111111111111111111112',
+export const WRAPPED_SAFE_MINT = new PublicKey(
+  'Safe111111111111111111111111111111111111111',
 );
 
 export const SWAP_PROGRAM_OWNER_FEE_ADDRESS = new PublicKey(
@@ -155,8 +155,10 @@ export function getLayoutForProgramId(programId: PublicKey): Structure {
   return TokenSwapLayoutLegacyV0;
 }
 
-export function getCreateInitSwapInstructionV2Layout(config: PoolConfig): Structure {
-    const fields = [
+export function getCreateInitSwapInstructionV2Layout(
+  config: PoolConfig,
+): Structure {
+  const fields = [
     u8('instruction'),
     u8('nonce'),
     nu64('tradeFeeNumerator'),

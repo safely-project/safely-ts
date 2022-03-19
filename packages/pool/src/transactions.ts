@@ -6,7 +6,7 @@ import {
   UserInfo,
 } from './instructions';
 import {
-  Account,
+  Keypair,
   AccountMeta,
   Connection,
   PublicKey,
@@ -16,7 +16,7 @@ import {
 import {
   TokenInstructions,
   TOKEN_PROGRAM_ID,
-  WRAPPED_SOL_MINT,
+  WRAPPED_SAFE_MINT,
 } from '@safely-project/token';
 import { Basket, PoolAction } from './schema';
 import BN from 'bn.js';
@@ -31,7 +31,7 @@ export interface TransactionAndSigners {
    * Auto-generated accounts that need to sign the transaction. Note that this does not include
    * the user (fee payer and spl-token owner) account.
    */
-  signers: Account[];
+  signers: Keypair[];
 }
 
 export interface SimplePoolParams {
@@ -122,12 +122,12 @@ export class PoolTransactions {
       throw new Error('assetMints and creatorAssets must have the same length');
     }
 
-    const poolStateAccount = new Account();
+    const poolStateAccount = new Keypair();
     const [vaultSigner, vaultSignerNonce] = await PublicKey.findProgramAddress(
       [poolStateAccount.publicKey.toBuffer()],
       programId,
     );
-    const poolTokenMint = new Account();
+    const poolTokenMint = new Keypair();
     const creatorPoolTokenAddress = await getAssociatedTokenAddress(
       creator,
       poolTokenMint.publicKey,
@@ -260,7 +260,7 @@ export class PoolTransactions {
     payer: PublicKey,
   ): TransactionAndSigners {
     const transaction = new Transaction();
-    const retbufAccount = new Account();
+    const retbufAccount = new Keypair();
     transaction.add(
       SystemProgram.createAccount({
         fromPubkey: payer,
@@ -305,17 +305,17 @@ export class PoolTransactions {
       );
     }
     const transaction = new Transaction();
-    const delegate = new Account();
+    const delegate = new Keypair();
     const signers = [delegate];
     user = { ...user, assetAccounts: user.assetAccounts.slice() };
-    let wrappedSolAccount: Account | null = null;
+    let wrappedSolAccount: Keypair | null = null;
 
     function approveDelegate(amount: BN, index: number, approveZero = false) {
       if (
         user.assetAccounts[index].equals(user.owner) &&
-        pool.state.assets[index].mint.equals(WRAPPED_SOL_MINT)
+        pool.state.assets[index].mint.equals(WRAPPED_SAFE_MINT)
       ) {
-        wrappedSolAccount = new Account();
+        wrappedSolAccount = new Keypair();
         signers.push(wrappedSolAccount);
         transaction.add(
           SystemProgram.createAccount({
@@ -327,7 +327,7 @@ export class PoolTransactions {
           }),
           TokenInstructions.initializeAccount({
             account: wrappedSolAccount.publicKey,
-            mint: WRAPPED_SOL_MINT,
+            mint: WRAPPED_SAFE_MINT,
             owner: delegate.publicKey,
           }),
         );

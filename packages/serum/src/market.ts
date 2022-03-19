@@ -4,7 +4,7 @@ import { Slab, SLAB_LAYOUT } from './slab';
 import { DexInstructions } from './instructions';
 import BN from 'bn.js';
 import {
-  Account,
+  Keypair,
   AccountInfo,
   Commitment,
   Connection,
@@ -26,7 +26,7 @@ import {
   SRM_DECIMALS,
   SRM_MINT,
   TOKEN_PROGRAM_ID,
-  WRAPPED_SOL_MINT,
+  WRAPPED_SAFE_MINT,
 } from './token-instructions';
 import { getLayoutVersion } from './tokens_and_markets';
 
@@ -341,7 +341,7 @@ export class Market {
     ownerAddress: PublicKey,
     includeUnwrappedSol = false,
   ): Promise<Array<{ pubkey: PublicKey; account: AccountInfo<Buffer> }>> {
-    if (this.baseMintAddress.equals(WRAPPED_SOL_MINT) && includeUnwrappedSol) {
+    if (this.baseMintAddress.equals(WRAPPED_SAFE_MINT) && includeUnwrappedSol) {
       const [wrapped, unwrapped] = await Promise.all([
         this.findBaseTokenAccountsForOwner(connection, ownerAddress, false),
         connection.getAccountInfo(ownerAddress),
@@ -375,7 +375,10 @@ export class Market {
     ownerAddress: PublicKey,
     includeUnwrappedSol = false,
   ): Promise<{ pubkey: PublicKey; account: AccountInfo<Buffer> }[]> {
-    if (this.quoteMintAddress.equals(WRAPPED_SOL_MINT) && includeUnwrappedSol) {
+    if (
+      this.quoteMintAddress.equals(WRAPPED_SAFE_MINT) &&
+      includeUnwrappedSol
+    ) {
       const [wrapped, unwrapped] = await Promise.all([
         this.findQuoteTokenAccountsForOwner(connection, ownerAddress, false),
         connection.getAccountInfo(ownerAddress),
@@ -434,7 +437,7 @@ export class Market {
     }: OrderParams,
   ) {
     const { transaction, signers } =
-      await this.makePlaceOrderTransaction<Account>(connection, {
+      await this.makePlaceOrderTransaction<Keypair>(connection, {
         owner,
         payer,
         side,
@@ -584,7 +587,7 @@ export class Market {
     };
   }
 
-  async makePlaceOrderTransaction<T extends PublicKey | Account>(
+  async makePlaceOrderTransaction<T extends PublicKey | Keypair>(
     connection: Connection,
     {
       owner,
@@ -610,7 +613,7 @@ export class Market {
       cacheDurationMs,
     );
     const transaction = new Transaction();
-    const signers: Account[] = [];
+    const signers: Keypair[] = [];
 
     // Fetch an SRM fee discount key if the market supports discounts and it is not supplied
     let useFeeDiscountPubkey: PublicKey | null;
@@ -637,7 +640,7 @@ export class Market {
       if (openOrdersAccount) {
         account = openOrdersAccount;
       } else {
-        account = new Account();
+        account = new Keypair();
       }
       transaction.add(
         await OpenOrders.makeCreateAccountTransaction(
@@ -660,13 +663,13 @@ export class Market {
       openOrdersAddress = openOrdersAccounts[0].address;
     }
 
-    let wrappedSolAccount: Account | null = null;
+    let wrappedSolAccount: Keypair | null = null;
     if (payer.equals(ownerAddress)) {
       if (
-        (side === 'buy' && this.quoteMintAddress.equals(WRAPPED_SOL_MINT)) ||
-        (side === 'sell' && this.baseMintAddress.equals(WRAPPED_SOL_MINT))
+        (side === 'buy' && this.quoteMintAddress.equals(WRAPPED_SAFE_MINT)) ||
+        (side === 'sell' && this.baseMintAddress.equals(WRAPPED_SAFE_MINT))
       ) {
-        wrappedSolAccount = new Account();
+        wrappedSolAccount = new Keypair();
         let lamports;
         if (side === 'buy') {
           lamports = Math.round(price * size * 1.01 * LAMPORTS_PER_SAFE);
@@ -692,7 +695,7 @@ export class Market {
         transaction.add(
           initializeAccount({
             account: wrappedSolAccount.publicKey,
-            mint: WRAPPED_SOL_MINT,
+            mint: WRAPPED_SAFE_MINT,
             owner: ownerAddress,
           }),
         );
@@ -729,7 +732,7 @@ export class Market {
     return { transaction, signers, payer: owner };
   }
 
-  makePlaceOrderInstruction<T extends PublicKey | Account>(
+  makePlaceOrderInstruction<T extends PublicKey | Keypair>(
     connection: Connection,
     params: OrderParams<T>,
   ): TransactionInstruction {
@@ -780,7 +783,7 @@ export class Market {
     }
   }
 
-  makeNewOrderV3Instruction<T extends PublicKey | Account>(
+  makeNewOrderV3Instruction<T extends PublicKey | Keypair>(
     params: OrderParams<T>,
   ): TransactionInstruction {
     const {
@@ -832,7 +835,7 @@ export class Market {
   private async _sendTransaction(
     connection: Connection,
     transaction: Transaction,
-    signers: Array<Account>,
+    signers: Array<Keypair>,
   ): Promise<TransactionSignature> {
     const signature = await connection.sendTransaction(transaction, signers, {
       skipPreflight: this._skipPreflight,
@@ -849,7 +852,7 @@ export class Market {
 
   async cancelOrderByClientId(
     connection: Connection,
-    owner: Account,
+    owner: Keypair,
     openOrders: PublicKey,
     clientId: BN,
   ) {
@@ -897,7 +900,7 @@ export class Market {
     return transaction;
   }
 
-  async cancelOrder(connection: Connection, owner: Account, order: Order) {
+  async cancelOrder(connection: Connection, owner: Keypair, order: Order) {
     const transaction = await this.makeCancelOrderTransaction(
       connection,
       owner.publicKey,
@@ -979,7 +982,7 @@ export class Market {
 
   async settleFunds(
     connection: Connection,
-    owner: Account,
+    owner: Keypair,
     openOrders: OpenOrders,
     baseWallet: PublicKey,
     quoteWallet: PublicKey,
@@ -1021,16 +1024,16 @@ export class Market {
     );
 
     const transaction = new Transaction();
-    const signers: Account[] = [];
+    const signers: Keypair[] = [];
 
-    let wrappedSolAccount: Account | null = null;
+    let wrappedSolAccount: Keypair | null = null;
     if (
-      (this.baseMintAddress.equals(WRAPPED_SOL_MINT) &&
+      (this.baseMintAddress.equals(WRAPPED_SAFE_MINT) &&
         baseWallet.equals(openOrders.owner)) ||
-      (this.quoteMintAddress.equals(WRAPPED_SOL_MINT) &&
+      (this.quoteMintAddress.equals(WRAPPED_SAFE_MINT) &&
         quoteWallet.equals(openOrders.owner))
     ) {
-      wrappedSolAccount = new Account();
+      wrappedSolAccount = new Keypair();
       transaction.add(
         SystemProgram.createAccount({
           fromPubkey: openOrders.owner,
@@ -1043,7 +1046,7 @@ export class Market {
       transaction.add(
         initializeAccount({
           account: wrappedSolAccount.publicKey,
-          mint: WRAPPED_SOL_MINT,
+          mint: WRAPPED_SAFE_MINT,
           owner: openOrders.owner,
         }),
       );
@@ -1085,7 +1088,7 @@ export class Market {
     return { transaction, signers, payer: openOrders.owner };
   }
 
-  async matchOrders(connection: Connection, feePayer: Account, limit: number) {
+  async matchOrders(connection: Connection, feePayer: Keypair, limit: number) {
     const tx = this.makeMatchOrdersTransaction(limit);
     return await this._sendTransaction(connection, tx, [feePayer]);
   }
@@ -1254,7 +1257,7 @@ export interface MarketOptions {
   commitment?: Commitment;
 }
 
-export interface OrderParams<T = Account> {
+export interface OrderParams<T = Keypair> {
   owner: T;
   payer: PublicKey;
   side: 'buy' | 'sell';
@@ -1263,7 +1266,7 @@ export interface OrderParams<T = Account> {
   orderType?: 'limit' | 'ioc' | 'postOnly';
   clientId?: BN;
   openOrdersAddressKey?: PublicKey;
-  openOrdersAccount?: Account;
+  openOrdersAccount?: Keypair;
   feeDiscountPubkey?: PublicKey | null;
   selfTradeBehavior?:
     | 'decrementTake'
@@ -1573,7 +1576,7 @@ export async function getMintDecimals(
   connection: Connection,
   mint: PublicKey,
 ): Promise<number> {
-  if (mint.equals(WRAPPED_SOL_MINT)) {
+  if (mint.equals(WRAPPED_SAFE_MINT)) {
     return 9;
   }
   const { data } = throwIfNull(

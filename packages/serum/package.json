@@ -1,6 +1,6 @@
 {
   "name": "@safely-project/serum",
-  "version": "0.13.62",
+  "version": "0.13.63",
   "description": "Library for interacting with the safely dex",
   "license": "MIT",
   "repository": "safely-project/safely-ts",

@@ -1,5 +1,12 @@
 [
   {
+    "address": "3VdA6xZiiSp8vheGz987T3qokLW7tHPdikebjpVMHhgw",
+    "name": "BOZO/OZOB",
+    "programId": "SsdxNC41napUG4AeUrU9ciNGNEMdxrGR9tLFE9i2WNa",
+    "owner": "CmEtCf1pm6qgXsa73Kxr2do2ikYyAC9d2HJ7RQf5WE2m",
+    "deprecated": true
+  },
+  {
     "address": "Ktx647kx7tFB6x5HGsvJhRC6tgzgbRjDoz6EsPRMXAZ",
     "name": "ARA/W11Y",
     "programId": "SsdxNC41napUG4AeUrU9ciNGNEMdxrGR9tLFE9i2WNa",
